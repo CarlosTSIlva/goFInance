@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "giFinance",
+    "slug": "giFinance",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "giFinance"
+}
