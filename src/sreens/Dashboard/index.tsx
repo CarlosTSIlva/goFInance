@@ -1,7 +1,9 @@
-import React from "react";
-import { getBottomSpace } from "react-native-iphone-x-helper";
+import React, { useState } from "react";
 import { HighlightCard } from "../../components/HighlightCard";
-import { TransactionCard } from "../../components/TransactionCard";
+import {
+  TransactionCard,
+  TransactionCardProps,
+} from "../../components/TransactionCard";
 
 import {
   Container,
@@ -19,33 +21,48 @@ import {
   TransactionsList,
 } from "./styles";
 
+export interface DataListProps extends TransactionCardProps {
+  id: string;
+}
+
 export function Dashboard() {
-  const data = [
+  const [data] = useState<DataListProps[]>([
     {
+      id: "1",
+      type: "positive",
       title: "desenvolvimento",
       amount: "R$ 13.000,00",
-      category: { icons: "dollar-sign", name: "Comida" },
+      category: { icon: "dollar-sign", name: "Comida" },
       date: "20/05/2020",
     },
     {
+      id: "2",
+
+      type: "negative",
       title: "desenvolvimento",
       amount: "R$ 13.000,00",
-      category: { icons: "dollar-sign", name: "Comida" },
+      category: { icon: "coffee", name: "Comida" },
       date: "20/05/2020",
     },
     {
+      id: "3",
+
+      type: "positive",
       title: "desenvolvimento",
       amount: "R$ 13.000,00",
-      category: { icons: "dollar-sign", name: "Comida" },
+      category: { icon: "shopping-bag", name: "Comida" },
       date: "20/05/2020",
     },
     {
+      id: "4",
+
+      type: "negative",
       title: "desenvolvimento",
       amount: "R$ 13.000,00",
-      category: { icons: "dollar-sign", name: "Comida" },
+      category: { icon: "dollar-sign", name: "Comida" },
       date: "20/05/2020",
     },
-  ];
+  ]);
 
   return (
     <Container>
@@ -87,8 +104,7 @@ export function Dashboard() {
         <Title>Listagem</Title>
         <TransactionsList
           data={data}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: getBottomSpace() }}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => <TransactionCard data={item} />}
         ></TransactionsList>
       </Transaction>
