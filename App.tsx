@@ -11,6 +11,7 @@ import AppLoading from "expo-app-loading";
 import theme from "./src/global/styles/theme";
 import { Register } from "./src/sreens/Register";
 // import { Dashboard } from "./src/sreens/Dashboard";
+import { CategorySelect } from "./src/sreens/CategorySelect";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
