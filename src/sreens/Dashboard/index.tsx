@@ -25,6 +25,7 @@ import {
   LoadContainer,
 } from './styles';
 import { useTheme } from 'styled-components';
+import { useAuth } from '../../hooks/auth';
 
 export interface DataListProps extends TransactionCardProps {
   id: string;
@@ -41,11 +42,6 @@ interface HiligthData {
   total: HighlightProps;
 }
 
-interface getLastTransactionDate {
-  collection: DataListProps[];
-  type: 'positive' | 'negative';
-}
-
 export function Dashboard() {
   const [transactions, setTransactions] = useState<DataListProps[]>([]);
   const [hiligthData, setHiligthData] = useState<HiligthData>(
@@ -53,8 +49,10 @@ export function Dashboard() {
   );
   const [isLoading, setIsLoading] = useState(true);
   const theme = useTheme();
+  const { sigOut, user } = useAuth();
+
   async function loadTransactions() {
-    const collectionKey = '@gofinance:transactions';
+    const collectionKey = `@gofinance:transactions_user:${user.id}`;
 
     const response = await AsyncStorage.getItem(collectionKey);
 
@@ -67,12 +65,20 @@ export function Dashboard() {
       collection: DataListProps[],
       type: 'positive' | 'negative'
     ) => {
+      const collectionFiltered = collection.filter(
+        (transaction) => transaction.type === type
+      );
+
+      if (collectionFiltered.length === 0) {
+        return 0;
+      }
+
       const lasTransaction = new Date(
         Math.max.apply(
           Math,
-          collection
-            .filter((transaction) => transaction.type === type)
-            .map((transaction) => new Date(transaction.date).getTime())
+          collectionFiltered.map((transaction) =>
+            new Date(transaction.date).getTime()
+          )
         )
       );
 
@@ -122,7 +128,10 @@ export function Dashboard() {
       'negative'
     );
 
-    const totalInterval = `01 a ${lastTransactionEntries}`;
+    const totalInterval =
+      lastTransactionEntries === 0
+        ? 'Não tem transaçào'
+        : `01 a ${lastTransactionEntries}`;
 
     const total = entriesTotal - expensiveTotal;
     setHiligthData({
@@ -131,14 +140,20 @@ export function Dashboard() {
           style: 'currency',
           currency: 'BRL',
         }),
-        lastTransaction: `Ultima entrada dia ${lastTransactionEntries} `,
+        lastTransaction:
+          lastTransactionEntries === 0
+            ? 'Não tem transaçào'
+            : `Ultima entrada dia ${lastTransactionEntries} `,
       },
       expensives: {
         amount: expensiveTotal.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL',
         }),
-        lastTransaction: `Ultima saída dia ${lastTransactionExpensives}`,
+        lastTransaction:
+          lastTransactionEntries === 0
+            ? 'Não tem transaçào'
+            : `Ultima saída dia ${lastTransactionExpensives}`,
       },
       total: {
         amount: total.toLocaleString('pt-BR', {
@@ -157,7 +172,6 @@ export function Dashboard() {
       loadTransactions();
     }, [])
   );
-
   return (
     <Container>
       {isLoading ? (
@@ -169,15 +183,13 @@ export function Dashboard() {
           <Header>
             <UserWrapper>
               <UserInfo>
-                <Potho
-                  source={{ uri: 'https://github.com/CarlosTeixeira615.png' }}
-                />
+                <Potho source={{ uri: user.picture }} />
                 <User>
                   <UserGreting>Ola,</UserGreting>
-                  <UserName>John Doe</UserName>
+                  <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
-              <LogoutButton onPress={() => {}}>
+              <LogoutButton onPress={sigOut}>
                 <Icon name='power' />
               </LogoutButton>
             </UserWrapper>

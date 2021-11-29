@@ -3,9 +3,8 @@
     "name": "giFinance",
     "slug": "giFinance",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "scheme": "gifinance",
+    "assetBundlePatterns": ["**/*"]
   },
   "name": "giFinance"
 }

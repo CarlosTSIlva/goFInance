@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import AppleSvg from '../../assets/apple.svg';
 import GoogleSvg from '../../assets/google.svg';
@@ -15,9 +15,34 @@ import {
 } from './styles';
 
 import { useAuth } from '../../hooks/auth';
+import { ActivityIndicator, Alert, Platform } from 'react-native';
+import { useTheme } from 'styled-components';
 export function SignIn() {
-  const { user } = useAuth();
-  console.log(user);
+  const { signInWithGoogle, signInWithApple } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const theme = useTheme();
+
+  const handleSiginWithGoogle = async () => {
+    try {
+      setIsLoading(true);
+      return await signInWithGoogle();
+    } catch (error) {
+      Alert.alert('Erro', 'Erro ao realizar o login');
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleSiginWithApple = async () => {
+    try {
+      setIsLoading(true);
+      return await signInWithApple();
+    } catch (error) {
+      Alert.alert('Erro', 'Erro ao realizar o login');
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Container>
@@ -32,8 +57,24 @@ export function SignIn() {
       </Header>
       <Footer>
         <FooterWrapper>
-          <SignInSocialButton title='Entrar com Google' svg={GoogleSvg} />
-          <SignInSocialButton title='Entrar com Apple' svg={AppleSvg} />
+          <SignInSocialButton
+            onPress={handleSiginWithGoogle}
+            title='Entrar com Google'
+            svg={GoogleSvg}
+          />
+          {Platform.OS === 'android' && (
+            <SignInSocialButton
+              onPress={handleSiginWithApple}
+              title='Entrar com Apple'
+              svg={AppleSvg}
+            />
+          )}
+          {isLoading && (
+            <ActivityIndicator
+              color={theme.colors.shape}
+              style={{ marginTop: 18 }}
+            />
+          )}
         </FooterWrapper>
       </Footer>
     </Container>

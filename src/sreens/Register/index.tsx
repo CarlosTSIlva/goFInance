@@ -19,6 +19,7 @@ import {
   TransactionsType,
 } from './styles';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../hooks/auth';
 
 interface NavigationProps {
   navigate: (screen: string) => void;
@@ -54,6 +55,7 @@ export function Register() {
   });
   const navigation = useNavigation<NavigationProps>();
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const { user } = useAuth();
 
   const handleTransactionsTypeSelect = (type: 'positive' | 'negative') => {
     setTransactionType(type);
@@ -82,7 +84,7 @@ export function Register() {
       date: new Date(),
     };
     try {
-      const collectionKey = '@gofinance:transactions';
+      const collectionKey = `@gofinance:transactions_user:${user.id}`;
 
       const data = await AsyncStorage.getItem(collectionKey);
       const currentData = data ? JSON.parse(data) : [];

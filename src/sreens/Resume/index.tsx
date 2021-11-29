@@ -22,6 +22,7 @@ import { ptBR } from 'date-fns/locale';
 import { LoadContainer } from '../Dashboard/styles';
 import { ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/core';
+import { useAuth } from '../../hooks/auth';
 
 interface TransactionData {
   type: 'positive' | 'negative';
@@ -46,6 +47,7 @@ export function Resume() {
 
   const [selectDate, setSelectDate] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   const theme = useTheme();
 
@@ -65,7 +67,7 @@ export function Resume() {
   const loadData = useCallback(async () => {
     setIsLoading(true);
 
-    const collectionKey = '@gofinance:transactions';
+    const collectionKey = `@gofinance:transactions_user:${user.id}`;
 
     const response = await AsyncStorage.getItem(collectionKey);
 
